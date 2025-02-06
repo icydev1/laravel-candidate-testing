@@ -65,31 +65,31 @@ class AuthorController extends Controller
     public function destroy($id)
     {
         // Check if the author has books associated with them
-        $authorResponse = $this->makeApiRequest('GET', "/api/v2/authors/{$id}", [], [
+        $checkAuthor = $this->makeApiRequest('GET', "/api/v2/authors/{$id}", [], [
             'Authorization' => 'Bearer ' . session()->get('token'),
         ]);
 
-        if (isset($authorResponse['error'])) {
-            return redirect()->route('authors.index')->with('error', $authorResponse['error']);
+        if (isset($checkAuthor['error'])) {
+            return redirect()->route('authors.index')->with('error', $checkAuthor['error']);
         }
 
 
 
         // Check if the author has any books
-        if (isset($authorResponse['books']) && count($authorResponse['books']) > 0) {
+        if (isset($checkAuthor['books']) && count($checkAuthor['books']) > 0) {
 
-            // dd($authorResponse);
+            // dd($checkAuthor);
 
             return redirect()->route('authors.index')->with('error', 'This author cannot be deleted because they have associated books.');
         }
 
         // delete author
-        $deleteResponse = $this->makeApiRequest('DELETE', "/api/v2/authors/{$id}", [], [
+        $deleteAuthor = $this->makeApiRequest('DELETE', "/api/v2/authors/{$id}", [], [
             'Authorization' => 'Bearer ' . session('token')
         ]);
 
-        if (isset($deleteResponse['error'])) {
-            return redirect()->route('authors.index')->with('error', $deleteResponse['error']);
+        if (isset($deleteAuthor['error'])) {
+            return redirect()->route('authors.index')->with('error', $deleteAuthor['error']);
         }
 
         return redirect()->route('authors.index')->with('success', 'Author deleted successfully.');
